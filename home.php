@@ -1,3 +1,7 @@
+<?php
+    session_start();
+
+?>
 <!doctype html>
 <html lang="en">
     <head>
@@ -5,7 +9,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Shuats DTS</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-        <link href="home.css" rel="stylesheet">
+        <link href="home_style.css" rel="stylesheet">
     </head>
     <body>
     <nav class="navbar bg-body-tertiary" data-bs-theme="dark">
@@ -14,7 +18,7 @@
             <div class="container text-center">
                 <div class ="row">
                     <div class = "col">
-                        <img src="shuatslogo.png" alt="Logo" width="50" height="50" class="d-inline-block align-text-top">
+                        <img src="ico/shuatslogo.png" alt="Logo" width="50" height="50" class="d-inline-block align-text-top">
                     </div>
                     <div class = "col" style="display: flex; align-items: center;">
                         SHUATS Document Tracking System
@@ -42,6 +46,7 @@
             </div>
         </div>
         <?php
+        $errName = "";
         function test_input($data) {
             $data = trim($data);
             $data = stripslashes($data);
@@ -50,18 +55,18 @@
           }
             if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 $trackingNo =test_input($_POST["trackingno"]);
+                include ('databasec.php');
                 if(array_key_exists("track",$_POST)){
-                    include ('databasec.php');
                     $result = mysqli_query($conn,"Select * from documentsrelation where dnumber = '".$trackingNo."';");
                     if(mysqli_num_rows($result)){
-                        echo "success";
+                        echo "success"; //will add Track Document page once other functionality done
                     }
                     else{
-                        echo "<script>alert('Enter Correct Value');</script>";
+                        $errName = "track";
                     }
                 }
-                else{
-                    echo var_dump($_POST);
+                else if(array_key_exists("add",$_POST)){
+                    echo ""; // have to work upon it
                 }
             }
         ?>
@@ -76,7 +81,7 @@
                         </nav>
                         <div style = "padding: 32px;">
                             <form class="input-group mb-3 my-3" action = "<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
-                                <input type="text" name="trackingno" class="form-control" placeholder="Tracking Number">
+                                <input type="text" name="trackingno" class="form-control" placeholder=<?php if($errName == "track")echo '"Enter Correct Value" id="error"'; else echo '"Tracking Number"';?>>
                                 <button class="btn btn-outline-secondary" name = "track" type="submit" id="button-track"><img src="ico/Track.png" width = "20" height = "20">  Track</button>
                             </form>
                         </div>
@@ -91,7 +96,7 @@
                             </nav>
                             <div style = "padding: 32px;">
                             <form class="input-group mb-3 my-3"action = "<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
-                                    <input type="text" name="trackingno" class="form-control" placeholder="Tracking Number">
+                                    <input type="text" name="trackingno" class="form-control" placeholder=<?php if($errName == "add")echo '"Enter Correct Value" id="error"'; else echo '"Tracking Number"';?>>
                                     <button class="btn btn-outline-secondary" name = "add" type="submit" id="button-track"><img src="ico/add.png" width = "20" height = "20">  Add</button>
                                 </form>
                             </div>
@@ -108,7 +113,7 @@
                         </nav>
                         <div style = "padding: 32px;">
                             <form class="input-group mb-3 my-3"action = "<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
-                                <input type="text" name="trackingno" class="form-control" placeholder="Tracking Number">
+                                <input type="text" name="trackingno" class="form-control" placeholder=<?php if($errName == "receive")echo '"Enter Correct Value" id="error"'; else echo '"Tracking Number"';?>>
                                 <button class="btn btn-outline-secondary" name = "receive" type="submit" id="button-track"><img src="ico/receive.png" width = "20" height = "20">  Receive</button>
                             </form>
                         </div>
@@ -123,7 +128,7 @@
                             </nav>
                             <div style = "padding: 32px;">
                             <form class="input-group mb-3 my-3" action = "<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
-                                    <input type="text" name="trackingno" class="form-control" placeholder="Tracking Number">
+                                    <input type="text" name="trackingno" class="form-control" placeholder=<?php if($errName == "releease")echo '"Enter Correct Value" id="error"'; else echo '"Tracking Number"';?>>
                                     <button class="btn btn-outline-secondary" name = "release" type="submit" id="button-track"><img src="ico/release.png" width = "24" height = "24">  Release</button>
                                 </form>
                             </div>
@@ -140,7 +145,7 @@
                         </nav>
                         <div style = "padding: 32px;">
                             <form class="input-group mb-3 my-3" action = "<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
-                                <input type="text" name="trackingno" class="form-control" placeholder="Tracking Number">
+                                <input type="text" name="trackingno" class="form-control" placeholder=<?php if($errName == "tagAsTerminal")echo '"Enter Correct Value" id="error"'; else echo '"Tracking Number"';?>>
                                 <button class="btn btn-outline-secondary" name = "tagAsTerminal" type="submit" id="button-track"><img src="ico/terminal.png" width = "20" height = "20">  Tag</button>
                             </form>
                         </div>

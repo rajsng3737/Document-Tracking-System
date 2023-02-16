@@ -61,8 +61,12 @@
             include ('databasec.php');
             $result = mysqli_query($conn,"SELECT email,faculty,department from credentials where email = '".test_input($_POST["email"])."' and password = '".test_input($_POST["password"])."' 
                                   and faculty = ".test_input($_POST["faculty"])." and department = ".test_input($_POST["departments"]).";");
-            if(mysqli_num_rows($result) > 0)
+            if(mysqli_num_rows($result) == 1){
+              session_start();
+              $_SESSION['faculty'] = test_input($_POST["faculty"]);
+              $_SESSION['departments'] = test_input($_POST["departments"]);
               echo "<script>window.location.href='home.php'</script>";
+            }
             else
               echo "Username Not Found";
             
@@ -78,7 +82,7 @@
     ?>
     <div class="container my-5 w-25">
       <div class ="col-4 mx-auto mb-4 w-100">
-      <img src="shuatslogo.png" class="img-fluid" alt="Shuats Logo">
+      <img src="ico/shuatslogo.png" class="img-fluid" alt="Shuats Logo">
       </div>
       <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
         <select id = "faculty" name="faculty" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
