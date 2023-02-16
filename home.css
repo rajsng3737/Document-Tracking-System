@@ -1,0 +1,11 @@
+.list-group-item a {
+    color: #000006;
+    text-decoration: none;
+    display:block;
+}
+
+.list-group a:hover {
+    color:#00A0C6; 
+    text-decoration:none; 
+    cursor:pointer; 
+}
