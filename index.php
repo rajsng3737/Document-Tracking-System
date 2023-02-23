@@ -1,3 +1,10 @@
+<?php
+    session_start();
+    if($_SESSION == true && isset($_SESSION['loggedin'])){
+      header("location: home.php");
+      exit;
+    }
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -8,78 +15,32 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
     <title>Login to SHUATS DTS</title>
   </head>
   <body>
     <?php
-      $email = $password = $select = "";
-      $emailErr = $passwordErr = $selectErr = $selectDeptErr = "";
-      // define the regular expression for password
-      $passwordRegex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{6,}$/";
-      // define the valid options for select
-      $validFacultyOptions = array("1", "2", "3", "4", "5", "6");
-      // check if the form is submitted
-      if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // validate the email format
-          if (empty($_POST["email"])) {
-            $emailErr = "Email is required";
-          } 
-          else {
-            $email = test_input($_POST["email"]);
-            // check if e-mail address is well-formed
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-              $emailErr = "Invalid email format";
-              }
-          }
-          // validate the password length and characters
-          if (empty($_POST["password"])) {
-            $passwordErr = "Password is required";
-          } 
-          /*else {
-            $password = test_input($_POST["password"]);
-            if (strlen($password) < 6 || !preg_match($passwordRegex, $password)) {
-              $passwordErr = "Password must have at least 6 characters, one uppercase letter, one lowercase letter and one digit";
-              return false;
-            }
-          }*/
-
-          // validate the select value
-          if ($_POST["faculty"] == 0) {
-            $selectErr = "Please select an option";
-          } 
-          else {
-            $select = test_input($_POST["faculty"]);
-            if (!in_array($select, $validFacultyOptions)) {
-              $selectErr = "Invalid option selected";
-            }
-          }
-          if ($_POST["departments"] == 0) {
-            $selectDeptErr = "Please select an option";
-          } 
           // if there are no errors, proceed with the form data
-          if ($emailErr == "" && $passwordErr == "" && $selectErr == "" && $selectDeptErr == "") {
-            include ('databasec.php');
-            $result = mysqli_query($conn,"SELECT email,faculty,department from credentials where email = '".test_input($_POST["email"])."' and password = '".test_input($_POST["password"])."' 
-                                  and faculty = ".test_input($_POST["faculty"])." and department = ".test_input($_POST["departments"]).";");
-            if(mysqli_num_rows($result) == 1){
-              session_start();
-              $_SESSION['loggedin'] = true;
-              $_SESSION['faculty'] = test_input($_POST["faculty"]);
-              $_SESSION['departments'] = test_input($_POST["departments"]);
-              header("location: home.php");
+          include "login_createaccount_infocheck.php";
+          if($_SERVER["REQUEST_METHOD"] == "POST"){
+            if (empty($_POST["password"])) {
+              $passwordErr = "Password is required";
+            }   
+            if ($emailErr == "" && $passwordErr == "" && $selectFacultyErr == "" && $selectDeptErr == "") {
+              include ('databasec.php');
+              $result = mysqli_query($conn,"SELECT email,faculty,department from credentials where email = '".test_input($_POST["email"])."' and password = '".test_input($_POST["password"])."' 
+                                    and faculty = ".test_input($_POST["faculty"])." and department = ".test_input($_POST["departments"]).";");
+              if(mysqli_num_rows($result) == 1){
+                session_start();
+                $_SESSION['loggedin'] = true;
+                $_SESSION['faculty'] = test_input($_POST["faculty"]);
+                $_SESSION['departments'] = test_input($_POST["departments"]);
+                header("location: home.php");
+              }
+              else
+                echo "Username Not Found";
             }
-            else
-              echo "Username Not Found";
-            
           }
-        }
-        // function to sanitize the form data
-        function test_input($data) {
-          $data = trim($data);
-          $data = stripslashes($data);
-          $data = htmlspecialchars($data);
-          return $data;
-        }
     ?>
     <div class="container my-5 w-25">
       <div class ="col-4 mx-auto mb-4 w-100">
@@ -95,66 +56,17 @@
             <option value="5">Faculty Of Health Science</option>
             <option value="6">Faculty of Science</option>
         </select>
-        <?php showError($selectErr)?>
+        <?php showError($selectFacultyErr)?>
         <select id = "departments" name="departments" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
         <option selected value="0">Choose Department</option>
         </select>
+        <script type="text/javascript" src="selectoption.js"></script>
         <?php showError($selectDeptErr)?>
-         <script>
-          let deptArr = {
-            1:["Naini Agricultural Institute (NAI)","Ethelind College of Home Science (ECHS)","Makino School of Continuing And Non-Formal Education (MSCNE)","College of Forestry (CF)"],
-            2:["Jacob Institute of Biotechnology And Bio-Engineering (JIBB) ","Vaugh Institute of Agricultural Engineering And Technology (VIAET)","Warner College of  Dairy Technology (WCDT)"],
-            3:["Gospel and Plough Institute of Theology","Department of Advanced Theological Studies","Yeshu Darbar Bible School"],
-            4:["Joseph School of Business Studies and Commerce","Chitamber School of Humanities and Social Sciences ","Allahabad School of Education","School of Film and Mass Communication"],
-            5:["Shalom Institute of Health and Allied Sciences (SIHAS)"],
-            6:["Faculty of Science"]
-          };
-          function addOptions(x){
-            i = 1;
-            deptArr[x].forEach(element => {
-                  dept.add(new Option(element,i));
-                  i++;
-                });
-          };
-          let facaulty = document.querySelector("#faculty");
-          let dept = document.querySelector("#departments");
-          faculty.addEventListener("change",()=>{
-            dept.options.length = 1;
-            switch(faculty.value){
-              case '1':
-                addOptions(1);
-                break;
-              case '2':
-                addOptions(2);
-                break;
-              case '3':
-                addOptions(3);
-                break;
-              case '4':
-                addOptions(4);
-                break;
-              case '5':
-                addOptions(5);
-                break;
-              case '6':
-                addOptions(6);
-                break;
-            }
-          });
-        </script>
-        <?php
-        function showError($value){
-          if(!empty($value)){
-            echo "<span hidden class='alert alert-danger d-flex align-items-center ' role='alert'>
-            $value </span>";
-          }
-        }
-        ?>
         <div class="mb-3 row">
           <label for="email" class="col-sm-2 col-form-label">Email</label>
           <div class="col-sm-10">
-            <input type="text" name = "email" class="form-control" id="email" value="email@example.com">
-            <?php showError($emailErr)?>
+            <input type="text" name = "email" class="form-control my-2" id="email" value = <?php if(isset($_POST['email'])) echo "$email" ?>>
+            <?php showError($passwordErr)?>
           </div>
           <label for="inputPassword" class="col-sm-2 col-form-label my-2">Password</label>
           <div class="col-sm-10">
@@ -166,6 +78,7 @@
           </div>
         </div>
       </form>
+      <a class ="d-grid text-center mx-auto" href="create_account.php">Create Account</a>
     </div>
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>

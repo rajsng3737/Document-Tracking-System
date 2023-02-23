@@ -1,7 +1,7 @@
 
     <nav class="navbar bg-body-tertiary" data-bs-theme="dark">
     <div class="container-fluid ">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="home.php">
             <div class="container text-center">
                 <div class ="row">
                     <div class = "col">

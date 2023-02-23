@@ -13,3 +13,7 @@
 #error::placeholder{
    color:red !important;
 }
+
+#error[disabled][placeholder]::placeholder {
+    color: red !important;
+  }
