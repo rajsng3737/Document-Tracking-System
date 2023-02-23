@@ -63,9 +63,10 @@
                                   and faculty = ".test_input($_POST["faculty"])." and department = ".test_input($_POST["departments"]).";");
             if(mysqli_num_rows($result) == 1){
               session_start();
+              $_SESSION['loggedin'] = true;
               $_SESSION['faculty'] = test_input($_POST["faculty"]);
               $_SESSION['departments'] = test_input($_POST["departments"]);
-              echo "<script>window.location.href='home.php'</script>";
+              header("location: home.php");
             }
             else
               echo "Username Not Found";
