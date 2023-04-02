@@ -12,7 +12,7 @@
         }
       }
       $email = $password = $select = "";
-      $emailErr = $passwordErr = $selectFacultyErr = $selectDeptErr = "";
+      $emailErr = $passwordErr = $selectFacultyErr = $selectDeptErr = $selectSchoolErr = "";
       // define the regular expression for password
       $passwordRegex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{6,}$/";
       // define the valid options for select
@@ -38,11 +38,13 @@
             $select = test_input($_POST["faculty"]);
             if (!in_array($select, $validFacultyOptions)) {
               $selectFacultyErr = "Invalid option selected";
-            }
+            }  
           }
-          if ($_POST["departments"] == 0) {
+          if($_POST["school"]== 0){
+            $selectSchoolErr = "Please select an option";
+          }
+          if ($_POST["department"] == 0) {
             $selectDeptErr = "Please select an option";
-          } 
-
+          }
         }
     ?>

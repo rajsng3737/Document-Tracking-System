@@ -6,9 +6,11 @@
                <div class="modal-header border-0">
                    <h5 class="modal-title" id="exampleModalLongTitle">'.$modal_header.'</h5>
                </div>
-               <div class="modal-body alert alert-'.$alert.'">
-                   '.$modal_val.'
-               </div>
+               <div class = "p-3">
+                    <div class="modal-body alert alert-'.$alert.'">
+                        '.$modal_val.'
+                    </div>
+                </div>
                <div class="modal-footer border-0">
                    <button type="button" id = "close_modal" class="btn btn-secondary" data-dismiss="modal">Close</button>
                </div>
@@ -20,6 +22,7 @@
        $("#receivedModal").modal("show");
        $("#close_modal").click(function(){
            $("#receivedModal").modal("hide");
+           location.replace("home.php");
        });
     });
     </script>';
