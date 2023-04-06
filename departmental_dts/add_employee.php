@@ -69,7 +69,7 @@
             }
             if( $empidErr == "" && $passwordErr == "" && $emailErr == "" && $nameErr == "")
             {
-                include "databasec.php";
+                include "../databasec.php";
                 $result = $result2 = false;
                 mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
                 $result = mysqli_query($conn,"INSERT INTO employee(employee_id,employee_name,email,password) VALUES ('".$employeeid."','".$_POST['name']."','".$email."','".$_POST['password']."');");

@@ -34,10 +34,19 @@
             </div>
           </a>
         </div>
-        <div class = "col-sm">
+      </div>
+      <div class ="row">
+        <div class = "col-sm-6">
           <a href="./employee_dts" class="login-column">
             <div class="login-button">
               <h2>Employee Login</h2>
+            </div>
+          </a>
+        </div>
+        <div class = "col-sm-6">
+          <a href="./employee_dts" class="login-column">
+            <div class="login-button">
+              <h2>Offices Login</h2>
             </div>
           </a>
         </div>

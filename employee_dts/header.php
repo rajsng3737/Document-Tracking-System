@@ -1,5 +1,4 @@
-
-    <nav class="navbar bg-body-tertiary" data-bs-theme="dark">
+<nav class="navbar bg-body-tertiary" data-bs-theme="dark">
     <div class="container-fluid ">
         <a class="navbar-brand" href="home.php">
             <div class="container text-center">
@@ -16,10 +15,9 @@
     </div>
     </nav>
     <div style= "display: flex; justify-content: center; align-items: center; height: 100px; ">
-        <h1 >
+        <h1 style = "color:saddlebrown;">
         <?php
-            include "../dept_list.php";    
-            echo $deptArr[$_SESSION['department']-1];
+            echo "Hello, ".$_SESSION['employeename']."!";
         ?>
         </h1>
     </div>

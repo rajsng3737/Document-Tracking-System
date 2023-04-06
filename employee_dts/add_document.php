@@ -47,11 +47,11 @@
                     $row = mysqli_fetch_array($route_id_result);
                     $route_id = $row['route_id'];
                     $result = mysqli_query($conn,"INSERT INTO documents(DocumentID, DocumentName, DocumentType, remark, CreationDate, LastModifiedDate,route_id, FileLocation, status) 
-                    VALUES ('".$_SESSION['document_no']."','".$title."','".$_POST['type']."','".$remarks."','".$time."','".$time."','".$route_id."','"."1','Pending');");
+                    VALUES ('".$_SESSION['document_no']."','".$title."','".$_POST['type']."','".$remarks."','".$time."','".$time."','".$route_id."','"."0','Pending');");
                     if($result){
-                        $result = mysqli_query($conn,"INSERT INTO doc_dept_relationship(document_id,dept_id) values ('".$_SESSION['document_no']."','".$_SESSION['department']."');");
+                        $result = mysqli_query($conn,"INSERT INTO doc_emp_relationship(document_id,employee_id) values ('".$_SESSION['document_no']."','".$_SESSION['employeeid']."');");
                         if($result){
-                            $updatedValue = mysqli_query($conn,"UPDATE departments SET next_doc_no = ".($_SESSION['next_doc_no']+1)." where dept_id = ".$_SESSION['department']);
+                            $updatedValue = mysqli_query($conn,"UPDATE employee SET next_doc_no = ".($_SESSION['next_doc_no']+1)." where employee_id = ".$_SESSION['employeeid']);
                             if($updatedValue){
                                 mysqli_commit($conn);
                                 $modal_header = "Added.";
@@ -128,6 +128,5 @@
             </form>
         </div>
     </div>
-    
 </body>
 </html>

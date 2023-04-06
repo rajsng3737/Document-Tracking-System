@@ -1,4 +1,3 @@
-
 .list-group-item a {
     color: #000006;
     text-decoration: none;
@@ -17,7 +16,7 @@
 }
 #shuats_logo{
      /* Set the animation duration and timing function */
-    animation-duration: 4s;
+    animation-duration: 2s;
     animation-timing-function: ease-in-out;
         
     /* Define the animation */

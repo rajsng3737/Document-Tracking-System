@@ -1,3 +1,9 @@
+<?php
+    if(isset($_SESSION['loggedin'])){
+        header("location: home.php");
+        exit;
+    }
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -46,7 +52,23 @@
       }
       if($emailErr == "" && $passwordErr == ""){
         include "../databasec.php";
-        $result = mysqli_query($conn,"SELECT * from employee where ");
+        mysqli_begin_transaction($conn,MYSQLI_TRANS_START_READ_WRITE);
+        $result = mysqli_query($conn,"SELECT * from employee where email = '".$email."' and password = '".$_POST['password']."';");
+        if(mysqli_num_rows($result)==1){
+          session_start();
+          $_SESSION['loggedin'] = true;
+          $result_array = array();
+          $result_array = mysqli_fetch_array($result);
+          $_SESSION['employeename']=$result_array['employee_name'];
+          $_SESSION['employeeid']=$result_array['employee_id'];
+          header("location:home.php");
+        }
+        else{
+          $modal_header = "Invalid Credentials.";
+          $modal_val = "Contact Department.";
+          $alert = "danger";
+          include "../modal.php";
+        }
       }
     }
     ?>
@@ -57,14 +79,18 @@
 	      </div>
 	      <div class="card-body">
 		      <form method = "post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-			      <div class="col-sm">
-				      <label for="email">Email address</label>
-              <input type="email" class="form-control" id="email" aria-describedby="email" placeholder="Enter email">
-			      </div>
-			      <div class="col-sm">
-				      <label for="password">Password</label>
-				      <input type="password" class="form-control" id="password" placeholder="Password">
-			      </div>
+            <div class="mb-3 row">
+              <label for="inputEmail" class="col-sm-2 col-form-label my-2">Email</label>
+              <div class="col-sm-10">
+                <input type="email" name="email" class="form-control my-2" id="inputEmail">
+                <?php showError($emailErr)?>
+            </div>
+			      <div class="mb-3 row">
+              <label for="inputPassword" class="col-sm-2 col-form-label my-2">Password</label>
+              <div class="col-sm-10">
+                <input type="password" name="password" class="form-control my-2" id="inputPassword">
+                <?php showError($passwordErr)?>
+            </div>
             <div>
 			        <button type="submit" class="btn btn-primary">Login</button>
             </div>
