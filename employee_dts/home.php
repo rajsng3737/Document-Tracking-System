@@ -166,7 +166,7 @@
                                                         }
                                                         return strtoupper($short_form); // Convert the short form to uppercase and return it
                                                     }
-                                                    $result = mysqli_query($conn,"select next_doc_no from employee where employee_id = ".$_SESSION['employeeid']);
+                                                    $result = mysqli_query($conn,"select next_doc_no from employee_next_doc where employee_id = ".$_SESSION['employeeid']);
                                                     $shortform = generate_short_form($_SESSION['employeename']);
                                                     if(mysqli_num_rows($result)==1){
                                                         $row = mysqli_fetch_assoc($result);

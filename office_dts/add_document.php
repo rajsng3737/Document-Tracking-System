@@ -46,42 +46,85 @@
                 if(mysqli_num_rows($route_id_result)==1){
                     $row = mysqli_fetch_array($route_id_result);
                     $route_id = $row['route_id'];
-                    $inserting_query = mysqli_query($conn,"INSERT INTO documents(DocumentID, DocumentName, DocumentType, remark, CreationDate, LastModifiedDate,route_id, FileLocation, status) 
-                    VALUES ('".$_SESSION['document_no']."','".$title."','".$_POST['type']."','".$remarks."','".$time."','".$time."','".$route_id."','"."0','Pending');");
-                    if($inserting_query){
-                        $result = mysqli_query($conn,"INSERT INTO doc_emp_relationship(document_id,employee_id) values ('".$_SESSION['document_no']."','".$_SESSION['employeeid']."');");
-                        if($result){
-                            $updatedValue = mysqli_query($conn,"UPDATE employee_next_doc SET next_doc_no = ".($_SESSION['next_doc_no']+1)." where employee_id = ".$_SESSION['employeeid']);
-                            if($updatedValue){
-                                mysqli_commit($conn);
-                                $modal_header = "Added.";
-                                $modal_val = "Document Added Succesfully.";
-                                $alert = "success";
-                                include "../modal.php";
+                    $result = mysqli_query($conn,"INSERT INTO documents(DocumentID, DocumentName, DocumentType, remark, CreationDate, LastModifiedDate,route_id, FileLocation, status) 
+                    VALUES ('".$_SESSION['document_no']."','".$title."','".$_POST['type']."','".$remarks."','".$time."','".$time."','".$route_id."','".$_SESSION['office_id']."','Pending');");
+                    if($result){
+                            if($_SESSION['office_id'] == 3){
+                                $result = mysqli_query($conn,"INSERT INTO doc_fdean_relationship(document_id,fdean_id) values ('".$_SESSION['document_no']."','".$_SESSION['fdean_id']."');");
+                                if($result){
+                                    $updatedValue = mysqli_query($conn,"UPDATE faculty_dean_next_doc SET next_doc_no = ".($_SESSION['next_doc_no']+1)." where fdean_id = ".$_SESSION['fdean_id']);
+                                    if($updatedValue){
+                                        echo "hi";
+                                        mysqli_commit($conn);
+                                        $modal_header = "Added.";
+                                        $modal_val = "Document Added Succesfully.";
+                                        $alert = "success";
+                                        include "../modal.php";
+                                    }
+                                    else{
+                                        mysqli_rollback($conn);
+                                        $modal_header = "Please Try Again";
+                                        $modal_val = "Document Cannot Be Added.";
+                                        $alert = "danger";
+                                        include "../modal.php";
+                                    }
+                                }
                             }
-                            else{
-                                mysqli_rollback($conn);
-                                $modal_header = "Please Try Again";
-                                $modal_val = "unable to update employee_next_doc.";
-                                $alert = "danger";
-                                include "../modal.php";
+                            else if($_SESSION['office_id'] == 2){
+                                $result = mysqli_query($conn,"INSERT INTO doc_sdean_relationship(document_id,sdean_id) values ('".$_SESSION['document_no']."','".$_SESSION['sdean_id']."');");
+                                if($result){
+                                    $updatedValue = mysqli_query($conn,"UPDATE school_dean_next_doc SET next_doc_no = ".($_SESSION['next_doc_no']+1)." where sdean_id = ".$_SESSION['sdean_id']);
+                                    if($updatedValue){
+                                        mysqli_commit($conn);
+                                        $modal_header = "Added.";
+                                        $modal_val = "Document Added Succesfully.";
+                                        $alert = "success";
+                                        include "../modal.php";
+                                    }
+                                    else{
+                                        mysqli_rollback($conn);
+                                        $modal_header = "Please Try Again";
+                                        $modal_val = "Document Cannot Be Added.";
+                                        $alert = "danger";
+                                        include "../modal.php";
+                                    }
+                                }
+                            }
+                            else {
+                                $result = mysqli_query($conn,"INSERT INTO doc_office_relationship(document_id,office_id) values ('".$_SESSION['document_no']."','".$_SESSION['office_id']."');");
+                                if($result){
+                                    $updatedValue = mysqli_query($conn,"UPDATE office_next_doc SET next_doc_no = ".($_SESSION['next_doc_no']+1)." where office_id = ".$_SESSION['office_id']);
+                                    if($updatedValue){
+                                        mysqli_commit($conn);
+                                        $modal_header = "Added.";
+                                        $modal_val = "Document Added Succesfully.";
+                                        $alert = "success";
+                                        include "../modal.php";
+                                    }
+                                    else{
+                                        mysqli_rollback($conn);
+                                        $modal_header = "Please Try Again";
+                                        $modal_val = "Document Cannot Be Added.";
+                                        $alert = "danger";
+                                        include "../modal.php";
+                                    }
+                                }
                             }
                         }
                         else{
                             mysqli_rollback($conn);
                             $modal_header = "Please Try Again";
-                            $modal_val = "Unable to insert in doc_emp_relationship.";
+                            $modal_val = "Document Cannot Be Added.";
                             $alert = "danger";
                             include "../modal.php";
                         }
                     }
                     else{
+                        mysqli_rollback($conn);
                         $modal_header = "Please Try Again";
-                        $modal_val = "Unable to Insert Document. ".mysqli_error($conn);
+                        $modal_val = "Document Cannot Be Added.";
                         $alert = "danger";
                         include "../modal.php";
-                        
-                        mysqli_rollback($conn);
                     }
                 }
                 else{
@@ -91,7 +134,6 @@
                         include "../modal.php";
                 }
                 mysqli_close($conn);
-        }
         }
     ?>
    
@@ -129,5 +171,6 @@
             </form>
         </div>
     </div>
+    
 </body>
 </html>

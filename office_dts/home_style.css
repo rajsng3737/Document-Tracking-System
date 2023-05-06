@@ -1,0 +1,61 @@
+
+.list-group-item a {
+    color: #000006;
+    text-decoration: none;
+    font-size:inherit;
+    display:block;
+}
+.list-group-item:hover{
+    background: linear-gradient(90deg, #2c3e50,#bdc3c7);
+    transition: width 0.5s ease !important ;/* add a smooth transition effect */
+}
+.list-group a:hover {
+    color:white;
+    text-decoration:none; 
+    font-size:20px;
+    cursor:pointer; 
+}
+#shuats_logo{
+     /* Set the animation duration and timing function */
+    animation-duration: 4s;
+    animation-timing-function: ease-in-out;
+        
+    /* Define the animation */
+    animation-name: rotate;
+    animation-iteration-count: infinite;
+      
+}
+@keyframes rotate {
+    0% {
+      /* Set the initial transform value */
+      transform: rotateY(0deg);
+    }
+    100% {
+      /* Set the final transform value */
+      transform: rotateY(360deg);
+    }
+  }
+  
+#error::placeholder{
+   color:red !important;
+}
+
+#error[disabled][placeholder]::placeholder {
+    color: red !important;
+  }
+ .col-6 .input-group:hover {
+    height: 50px !important ;
+    transition: width 0.5s ease !important ;/* add a smooth transition effect */
+}
+.col-6 .navbar{
+    background: linear-gradient(132deg, #b92b27 0.00%, #1565C0 100.00%);
+    border-top-left-radius: 15px; 
+    border-top-right-radius: 15px;
+}
+.col-6 .navbar a{
+  color:white;
+}
+.col .card-header{
+    background: linear-gradient(132deg, #0F2027 0.00%,#203A43 50.00%, #2C5364 100.00%);
+    color:white;
+}

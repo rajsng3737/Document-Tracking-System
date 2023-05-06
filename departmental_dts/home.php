@@ -88,29 +88,41 @@
                             if(mysqli_num_rows($res)== 1){
                                 $res_array = mysqli_fetch_array($res);
                                 if($res_array['office_id'] == 1){
-                                    $query_res = mysqli_query($conn,"update documents set FileLocation = '1',status='Pending' where DocumentID ='".$trackingno."';");
-                                    if($query_res){
-                                        if(mysqli_affected_rows($conn) == 1){
-                                            mysqli_commit($conn);
-                                            $modal_header = "Received.";
-                                            $modal_val = "Document Received Succesfully.";
-                                            $alert = "success";
-                                            include "../modal.php";
+                                    $emp = mysqli_query($conn,"select employee_id from doc_emp_relationship where document_id = '".$trackingno."';");
+                                    if(mysqli_num_rows($emp)== 1){
+                                        $dept_id = mysqli_query($conn,"select dept_id from emp_dept_relationship where employee_id = '".mysqli_fetch_array($emp)['employee_id']."';");
+                                        if(mysqli_fetch_array($dept_id)['dept_id'] == $_SESSION['department']){
+                                            $query_res = mysqli_query($conn,"update documents set FileLocation = '1',status='Pending' where DocumentID ='".$trackingno."';");
+                                            if($query_res){
+                                                if(mysqli_affected_rows($conn) == 1){
+                                                    mysqli_commit($conn);
+                                                    $modal_header = "Received.";
+                                                    $modal_val = "Document Received Succesfully.";
+                                                    $alert = "success";
+                                                    include "../modal.php";
+                                                }
+                                                else{
+                                                    mysqli_rollback($conn);
+                                                    $modal_header = "Please Try Again";
+                                                    $modal_val = "Document Cannot Be Recieved.";
+                                                    $alert = "danger";
+                                                    include "../modal.php";
+                                                }
+                                            }
+                                            else{
+                                                mysqli_rollback($conn);
+                                                $modal_header = "Please Try Again";
+                                                $modal_val = "Error in Receiving the Document.";
+                                                $alert = "danger";
+                                                include "../modal.php";
+                                            }
                                         }
                                         else{
-                                            mysqli_rollback($conn);
-                                            $modal_header = "Please Try Again";
-                                            $modal_val = "Document Cannot Be Recieved.";
+                                            $modal_header = "Un-Authorized Access";
+                                            $modal_val = "The document you are trying to receive, belongs to a different Department.";
                                             $alert = "danger";
                                             include "../modal.php";
                                         }
-                                    }
-                                    else{
-                                        mysqli_rollback($conn);
-                                        $modal_header = "Please Try Again";
-                                        $modal_val = "Error in Receiving the Document.";
-                                        $alert = "danger";
-                                        include "../modal.php";
                                     }
                                 }
                                 else{
@@ -179,9 +191,9 @@
         include "../databasec.php";
         $pending = "0";
         $result_dept = mysqli_query($conn,"select count(document_id) from doc_dept_relationship where dept_id = ".$_SESSION['department']." and document_id IN (select DocumentID from documents where FileLocation ='1' and status = 'Pending');");
-        $result_emp = mysqli_query($conn,"select count(document_id) from doc_emp_relationship where document_id IN (select DocumentID from documents where FileLocation ='1') 
+        $result_emp = mysqli_query($conn,"select count(document_id) from doc_emp_relationship where document_id IN (select DocumentID from documents where FileLocation ='1' and status = 'Pending') 
                                                                                                 and employee_id IN (select employee_id from emp_dept_relationship where dept_id = ".$_SESSION['department'].");");
-        $result_office = mysqli_query($conn,"select count(document_id) from doc_office_relationship where document_id IN (select DocumentID from documents where FileLocation ='1');");        
+        $result_office = mysqli_query($conn,"select count(document_id) from doc_office_relationship where document_id IN (select DocumentID from documents where FileLocation ='1' and status = 'Pending');");        
             $row_result_dept = mysqli_fetch_array($result_dept);
             $row_result_emp = mysqli_fetch_array($result_emp);
             $row_result_office = mysqli_fetch_array($result_office);

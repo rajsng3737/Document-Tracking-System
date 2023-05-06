@@ -53,15 +53,25 @@
       if($emailErr == "" && $passwordErr == ""){
         include "../databasec.php";
         mysqli_begin_transaction($conn,MYSQLI_TRANS_START_READ_WRITE);
-        $result = mysqli_query($conn,"SELECT * from employee where email = '".$email."' and password = '".$_POST['password']."';");
+        $result = mysqli_query($conn,"SELECT employee_id from employee_credentials where email = '".$email."' and password = '".$_POST['password']."';");
         if(mysqli_num_rows($result)==1){
           session_start();
           $_SESSION['loggedin'] = true;
           $result_array = array();
           $result_array = mysqli_fetch_array($result);
-          $_SESSION['employeename']=$result_array['employee_name'];
           $_SESSION['employeeid']=$result_array['employee_id'];
-          header("location:home.php");
+          $result = mysqli_query($conn,"SELECT employee_name from employee where employee_id = '".$result_array['employee_id']."';");
+          if(mysqli_num_rows($result)==1){
+            $result_array = mysqli_fetch_array($result);
+            $_SESSION['employeename']=$result_array['employee_name'];
+            header("location:home.php");
+          }
+          else{
+            $modal_header = "Something went wrong.";
+            $modal_val = "Please try again.";
+            $alert = "danger";
+            include "../modal.php";
+          }
         }
         else{
           $modal_header = "Invalid Credentials.";
@@ -69,6 +79,7 @@
           $alert = "danger";
           include "../modal.php";
         }
+        mysqli_close($conn);
       }
     }
     ?>

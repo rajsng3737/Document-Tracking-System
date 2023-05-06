@@ -72,9 +72,11 @@
                 include "../databasec.php";
                 $result = $result2 = false;
                 mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
-                $result = mysqli_query($conn,"INSERT INTO employee(employee_id,employee_name,email,password) VALUES ('".$employeeid."','".$_POST['name']."','".$email."','".$_POST['password']."');");
-                $result2 = mysqli_query($conn,"INSERT INTO emp_dept_relationship(employee_id,dept_id) VALUES ('".$employeeid."','".$_SESSION['department']."');");
-                if($result && $result2){
+                $result_name = mysqli_query($conn,"INSERT INTO employee(employee_id,employee_name) VALUES ('".$employeeid."','".$_POST['name']."');");
+                $result_credentials = mysqli_query($conn,"INSERT INTO employee_credentials(employee_id,email,password) VALUES ('".$employeeid."','".$email."','".$_POST['password']."');");
+                $result_next_doc = mysqli_query($conn,"INSERT INTO employee_next_doc(employee_id,next_doc_no) VALUES ('".$employeeid."','1')");
+                $result_empdept_relationship = mysqli_query($conn,"INSERT INTO emp_dept_relationship(employee_id,dept_id) VALUES ('".$employeeid."','".$_SESSION['department']."');");
+                if($result_name && $result_credentials && $result_next_doc && $result_empdept_relationship){
                         mysqli_commit($conn);
                         echo '<div class="modal fade" id="receivedModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style = "display:block">
                              <div class="modal-dialog modal-dialog-centered" role="document">

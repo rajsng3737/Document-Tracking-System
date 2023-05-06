@@ -41,7 +41,7 @@
                         <tbody>
                             <?php
                                 include "../databasec.php";
-                                $res = mysqli_query($conn,"select * from documents where DocumentID IN (select document_id from doc_dept_relationship where document_id = ".$_SESSION['department'].") and status = 'Pending' and FileLocation ='1';" );
+                                $res = mysqli_query($conn,"select * from documents where DocumentID IN (select document_id from doc_dept_relationship where dept_id = ".$_SESSION['department'].") and status = 'Pending' and FileLocation ='1';" );
                                 $tmp = 1;
                                 while($res_array = mysqli_fetch_assoc($res)){
                                     echo "<tr>
@@ -56,7 +56,7 @@
                                     $tmp++;
                                 }
                                 $res = mysqli_query($conn,"select * from documents where DocumentID IN (select document_id from doc_emp_relationship where employee_id IN (select employee_id from emp_dept_relationship where dept_id = ".$_SESSION['department'].")
-                                                                                                         and document_id IN (select documentID from documents where FileLocation = 1));");
+                                                                                                         and document_id IN (select documentID from documents where FileLocation = 1 and status = 'pending'));");
                                 while($res_array = mysqli_fetch_assoc($res)){
                                     echo "<tr>
                                     <th scope='row'>".$tmp."</th>

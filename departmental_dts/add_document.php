@@ -42,7 +42,7 @@
                 include "../databasec.php";
                 $time = date('Y-m-d H:i:s');
                 mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
-                $route_id_result = mysqli_query($conn,"Select route_id from document_type where document_id = "."'".$_POST['type']."';");
+                $route_id_result = mysqli_query($conn,"Select route_id from document_type where type_id = "."'".$_POST['type']."';");
                 if(mysqli_num_rows($route_id_result)==1){
                     $row = mysqli_fetch_array($route_id_result);
                     $route_id = $row['route_id'];

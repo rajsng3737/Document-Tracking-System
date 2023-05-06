@@ -1,7 +1,7 @@
 <?php
     session_start();
     if($_SESSION == true && isset($_SESSION['loggedin'])){
-      header("location: home.php");
+      header("location: departmental_dts/home.php");
       exit;
     }
 ?>
@@ -44,7 +44,7 @@
           </a>
         </div>
         <div class = "col-sm-6">
-          <a href="./employee_dts" class="login-column">
+          <a href="./office_dts" class="login-column">
             <div class="login-button">
               <h2>Offices Login</h2>
             </div>
