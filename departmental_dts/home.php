@@ -60,7 +60,7 @@
                         $row = mysqli_fetch_assoc($result);
                         if($row['status']=="Pending"){
                             mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
-                            $res = mysqli_query($conn,"select office_id from routesteps where route_id = '".$row['route_id']."' and step_number = '".($row['FileLocation'])."';");
+                            $res = mysqli_query($conn,"select office_id from routesteps where route_id = '".$row['route_id']."' and step_number = '".($row['step_number'])."';");
                             if(mysqli_num_rows($res)== 1){
                                 $res_array = mysqli_fetch_array($res);
                                 if($res_array['office_id'] == 1){
@@ -92,8 +92,9 @@
                                     if(mysqli_num_rows($emp)== 1){
                                         $dept_id = mysqli_query($conn,"select dept_id from emp_dept_relationship where employee_id = '".mysqli_fetch_array($emp)['employee_id']."';");
                                         if(mysqli_fetch_array($dept_id)['dept_id'] == $_SESSION['department']){
-                                            $query_res = mysqli_query($conn,"update documents set FileLocation = '1',status='Pending' where DocumentID ='".$trackingno."';");
-                                            if($query_res){
+                                            $query_res = mysqli_query($conn,"update documents set FileLocation = '1',status='Pending', step_number = '".($row['step_number']+1)."' where DocumentID ='".$trackingno."';");
+                                            $query_updating_report = mysqli_query($conn,"INSERT INTO document_report(DocumentId,received_date, which_step) VALUES('".$trackingno."' ,'".date('Y-m-d H:i:s')."' ,'".($row['step_number']+1)."')");
+                                            if($query_res && $query_updating_report){
                                                 if(mysqli_affected_rows($conn) == 1){
                                                     mysqli_commit($conn);
                                                     $modal_header = "Received.";
@@ -148,7 +149,7 @@
                 else if(array_key_exists("release",$_POST)){
                     mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
                     $res = mysqli_query($conn,"select office_id from routesteps where route_id = (select route_id from documents where DocumentID = '".$trackingno."') 
-                                                                        and step_number = (select FileLocation from documents where DocumentID = '".$trackingno."');");
+                                                                        and step_number = (select step_number from documents where DocumentID = '".$trackingno."');");
                     if($res){
                         $res_array = mysqli_fetch_array($res);
                         if($res_array['office_id']==1){

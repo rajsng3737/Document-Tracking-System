@@ -1,7 +1,12 @@
 <?php
     session_start();
     if($_SESSION == true && isset($_SESSION['loggedin'])){
-      header("location: departmental_dts/home.php");
+      if(array_key_exists("employeeid",$_SESSION) && array_key_exists("employeename",$_SESSION))
+        header("location:employee_dts/home.php");
+      else if(array_key_exists('faculty',$_SESSION) && array_key_exists('school',$_SESSION) && array_key_exists('department',$_SESSION))
+        header("location: departmental_dts/home.php");
+      else if(array_key_exists('office_id',$_SESSION))
+        header("location: office_dts/home.php");
       exit;
     }
 ?>

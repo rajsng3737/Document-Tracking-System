@@ -46,8 +46,8 @@
                 if(mysqli_num_rows($route_id_result)==1){
                     $row = mysqli_fetch_array($route_id_result);
                     $route_id = $row['route_id'];
-                    $inserting_query = mysqli_query($conn,"INSERT INTO documents(DocumentID, DocumentName, DocumentType, remark, CreationDate, LastModifiedDate,route_id, FileLocation, status) 
-                    VALUES ('".$_SESSION['document_no']."','".$title."','".$_POST['type']."','".$remarks."','".$time."','".$time."','".$route_id."','"."0','Pending');");
+                    $inserting_query = mysqli_query($conn,"INSERT INTO documents(DocumentID, DocumentName, DocumentType, remark, CreationDate, LastModifiedDate,route_id, FileLocation, step_number, status) 
+                    VALUES ('".$_SESSION['document_no']."','".$title."','".$_POST['type']."','".$remarks."','".$time."','".$time."','".$route_id."','"."0','0','Pending');");
                     if($inserting_query){
                         $result = mysqli_query($conn,"INSERT INTO doc_emp_relationship(document_id,employee_id) values ('".$_SESSION['document_no']."','".$_SESSION['employeeid']."');");
                         if($result){

@@ -88,10 +88,20 @@
                                     WHERE d.FileLocation = '3'
                                     AND d.status = 'Pending'
                                     AND fd.fdean_id = '".$_SESSION['fdean_id']."';");
+                                    
+                                    $pending_doc_sdean = mysqli_query($conn,"SELECT d.* FROM documents d
+                                    INNER JOIN doc_sdean_relationship dsr ON dsr.document_id = d.DocumentID
+                                    INNER JOIN school_dean sd ON sd.sdean_id = dsr.sdean_id
+                                    INNER JOIN schools s ON s.school_id = sd.school_id
+                                    INNER JOIN faculty f ON f.faculty_id = s.faculty_id
+                                    INNER JOIN faculty_dean fd ON fd.faculty_id = f.faculty_id
+                                    WHERE d.FileLocation = '3'
+                                    AND d.status = 'Pending'
+                                    AND fd.fdean_id = '".$_SESSION['fdean_id']."';");
 
                                     $pending_doc_fdean = mysqli_query($conn,"SELECT * FROM documents WHERE documentID LIKE '".$_SESSION['fdean_id']."_%' AND status ='Pending';");
 
-                                    $pending_doc = array_merge(mysqli_fetch_all($pending_doc_emp),mysqli_fetch_all($pending_doc_dept));
+                                    $pending_doc = array_merge(array_merge(array_merge(mysqli_fetch_all($pending_doc_emp),mysqli_fetch_all($pending_doc_dept)),mysqli_fetch_all($pending_doc_sdean)),mysqli_fetch_all($pending_doc_fdean));
                                     
                                 }
                                 else if($_SESSION['office_id'] > 3)
@@ -105,7 +115,7 @@
                                     <td>".$res_row[3]."</td>
                                     <td>".$res_row[5]."</td>
                                     <td>".$res_row[7]."</td>
-                                    <td>".$res_row[8]."</td>
+                                    <td>".$res_row[9]."</td>
                                     </tr>";
                                     $tmp++;
                                 }

@@ -34,10 +34,7 @@
                 if(array_key_exists("track",$_POST)){
                     $result = mysqli_query($conn,"Select * from documents where DocumentID = '".$trackingno."';");
                     if(mysqli_num_rows($result) == 1){
-                        $result_array = array();
-                        while($row = mysqli_fetch_assoc($result)){
-                            $result_array = $row;
-                        }
+                        $result_array = mysqli_fetch_array($result);
                         $_SESSION['track_results'] = $result_array;
                         header("location: track_document.php");
                     }
@@ -57,7 +54,7 @@
                 else if(array_key_exists("release",$_POST)){
                     mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
                     $res = mysqli_query($conn,"select office_id from routesteps where route_id = (select route_id from documents where DocumentID = '".$trackingno."') 
-                                                                        and step_number = (select FileLocation from documents where DocumentID = '".$trackingno."');");
+                                                                        and step_number = (select step_number from documents where DocumentID = '".$trackingno."');");
                     if($res){
                         $res_array = mysqli_fetch_array($res);
                         if($res_array['office_id']==0){

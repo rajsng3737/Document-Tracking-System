@@ -27,7 +27,7 @@
                 </div>
                 <div class="card-body">
                     <table class="table table-striped table-hover">
-                        <thead >
+                        <thead>
                             <tr class ="bg-dark" style="color:white;">
                             <th scope="col">S. No</th>
                             <th scope="col">Document ID</th>

@@ -1,0 +1,15 @@
+tr{
+    border:1px solid lightgray;
+}
+tr .col-3{
+    font-family: sans-serif;
+    color:saddlebrown !important;
+    border-right:1px SOLID lightgray;
+    vertical-align: center;
+}
+tr .data{
+
+    font-family: sans-serif;
+    font-weight:bold;
+    vertical-align: middle;
+}

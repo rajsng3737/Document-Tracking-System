@@ -60,7 +60,7 @@
                         $row = mysqli_fetch_assoc($result);
                         if($row['status']=="Pending"){
                             mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
-                            $res = mysqli_query($conn,"select office_id from routesteps where route_id = '".$row['route_id']."' and step_number = '".($row['FileLocation'])."';");
+                            $res = mysqli_query($conn,"select office_id from routesteps where route_id = '".$row['route_id']."' and step_number = '".($row['step_number'])."';");
                             if(mysqli_num_rows($res)== 1){
                                 $res_array = mysqli_fetch_array($res);
                                 if($res_array['office_id'] == $_SESSION['office_id']){
@@ -84,7 +84,7 @@
                         }
                         else if($row['status'] == "Released"){
                             mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
-                            $office_id_query = mysqli_query($conn,"select office_id from routesteps where route_id = '".$row['route_id']."' and step_number = '".($row['FileLocation']+1)."';");
+                            $office_id_query = mysqli_query($conn,"select office_id from routesteps where route_id = '".$row['route_id']."' and step_number = '".($row['step_number']+1)."';");
                             if(mysqli_num_rows($office_id_query) == 1){
                                 $office_id = mysqli_fetch_array($office_id_query)['office_id'];
                                 // 2 means school dean
@@ -96,8 +96,9 @@
                                         $sdean_id_query = mysqli_query($conn,"select sdean_id from school_dean where school_id IN (select school_id from departments where dept_id IN(select dept_id from emp_dept_relationship where employee_id = '".mysqli_fetch_array($doc_by_emp)['employee_id']."'));");
                                         $sdean_id = mysqli_fetch_array($sdean_id_query)['sdean_id'];
                                         if($_SESSION['office_id'] == '2' && $_SESSION['sdean_id'] == $sdean_id){
-                                            $query_res = mysqli_query($conn,"update documents set FileLocation = '".$_SESSION['office_id']."',status='Pending' where DocumentID ='".$trackingno."';");
-                                            if($query_res){
+                                            $query_res = mysqli_query($conn,"update documents set FileLocation = '".$_SESSION['office_id']."',status='Pending' ,step_number = '".($row['step_number']+1)."' where DocumentID ='".$trackingno."';");
+                                            $query_updating_report = mysqli_query($conn,"INSERT INTO document_report(DocumentId,received_date, which_step) VALUES('".$trackingno."' ,'".date('Y-m-d H:i:s')."' ,'".($row['step_number']+1)."')");
+                                            if($query_res && $query_updating_report){
                                                 if(mysqli_affected_rows($conn) == 1){
                                                     mysqli_commit($conn);
                                                     $modal_header = "Received.";
@@ -128,12 +129,14 @@
                                             include "../modal.php";
                                         }
                                     }
-                                    else if(mysqli_num_rows($doc_by_dept) == 2){
+                                    else if(mysqli_num_rows($doc_by_dept) == 1){
                                         $sdean_id_query = mysqli_query($conn,"select sdean_id from school_dean where school_id IN (select school_id from departments where dept_id = ".mysqli_fetch_array($doc_by_dept)['dept_id']." );");
                                         $sdean_id = mysqli_fetch_array($sdean_id_query)['sdean_id'];
                                         if($_SESSION['office_id'] == 2 && $_SESSION['sdean_id'] == $sdean_id){
-                                            $query_res = mysqli_query($conn,"update documents set FileLocation = '".$_SESSION['office_id']."',status='Pending' where DocumentID ='".$trackingno."';");
-                                            if($query_res){
+                                            $query_res = mysqli_query($conn,"update documents set FileLocation = '".$_SESSION['office_id']."',status='Pending' ,step_number = '".($row['step_number']+1)."' where DocumentID ='".$trackingno."';");
+                                            $query_updating_report = mysqli_query($conn,"INSERT INTO document_report(DocumentId,received_date, which_step) VALUES('".$trackingno."' ,'".date('Y-m-d H:i:s')."' ,'".($row['step_number']+1)."')");
+                                            echo $query_updating_report;
+                                            if($query_res && $query_updating_report){
                                                 if(mysqli_affected_rows($conn) == 1){
                                                     mysqli_commit($conn);
                                                     $modal_header = "Received.";
@@ -179,8 +182,9 @@
                                         $fdean_id_query = mysqli_query($conn,"select fdean_id from faculty_dean where faculty_id IN (select faculty_id from schools where school_id IN (select school_id from departments where dept_id IN (select dept_id from employee where employee_id = '".mysqli_fetch_array($doc_by_emp)['employee_id']."')))");
                                         $fdean_id = mysqli_fetch_array($fdean_id_query)['fdean_id'];
                                         if($_SESSION['office_id'] == 3 && $_SESSION['fdean_id'] == $fdean_id){
-                                            $query_res = mysqli_query($conn,"update documents set FileLocation = '".$_SESSION['office_id']."',status='Pending' where DocumentID ='".$trackingno."';");
-                                            if($query_res){
+                                            $query_res = mysqli_query($conn,"update documents set FileLocation = '".$_SESSION['office_id']."',status='Pending' ,step_number = '".($row['step_number']+1)."' where DocumentID ='".$trackingno."';");
+                                            $query_updating_report = mysqli_query($conn,"INSERT INTO document_report(DocumentId,received_date, which_step) VALUES('".$trackingno."' ,'".date('Y-m-d H:i:s')."' ,'".($row['step_number']+1)."')");
+                                            if($query_res && $query_updating_report){
                                                 if(mysqli_affected_rows($conn) == 1){
                                                     mysqli_commit($conn);
                                                     $modal_header = "Received.";
@@ -208,8 +212,9 @@
                                         $fdean_id_query = mysqli_query($conn,"select fdean_id from faculty_dean where faculty_id IN (select faculty_id from schools where school_id IN(select school_id from departments where dept_id = '".mysqli_fetch_array($doc_by_dept)['dept_id']."'))");
                                         $fdean_id = mysqli_fetch_array($fdean_id_query)['fdean_id'];
                                         if($_SESSION['office_id'] == 3 && $_SESSION['fdean_id'] == $fdean_id ){
-                                            $query_res = mysqli_query($conn,"update documents set FileLocation = '".$_SESSION['office_id']."',status='Pending' where DocumentID ='".$trackingno."';");
-                                            if($query_res){
+                                            $query_res = mysqli_query($conn,"update documents set FileLocation = '".$_SESSION['office_id']."',status='Pending', step_number = '".($row['step_number']+1)."' where DocumentID ='".$trackingno."';");
+                                            $query_updating_report = mysqli_query($conn,"INSERT INTO document_report(DocumentId,received_date, which_step) VALUES('".$trackingno."' ,'".date('Y-m-d H:i:s')."' ,'".($row['step_number']+1)."')");
+                                            if($query_res && $query_updating_report){
                                                 if(mysqli_affected_rows($conn) == 1){
                                                     mysqli_commit($conn);
                                                     $modal_header = "Received.";
@@ -243,8 +248,9 @@
                                             INNER JOIN faculty_dean fd ON f.faculty_id = fd.faculty_id
                                             WHERE status = 'Released' AND fd.fdean_id = '".$_SESSION['fdean_id']."' AND d.documentID = '".$trackingno."';");
                                             if(mysqli_num_rows($receiving_query) == 1){
-                                                $query_res = mysqli_query($conn,"update documents set FileLocation = '".$_SESSION['office_id']."',status='Pending' where DocumentID ='".$trackingno."';");
-                                                if($query_res){
+                                                $query_res = mysqli_query($conn,"update documents set FileLocation = '".$_SESSION['office_id']."',status='Pending' ,step_number = '".($row['step_number']+1)."' where DocumentID ='".$trackingno."';");
+                                                $query_updating_report = mysqli_query($conn,"INSERT INTO document_report(DocumentId,received_date, which_step) VALUES('".$trackingno."' ,'".date('Y-m-d H:i:s')."' ,'".($row['step_number']+1)."')");
+                                                if($query_res && $query_updating_report){
                                                     if(mysqli_affected_rows($conn) == 1){
                                                         mysqli_commit($conn);
                                                         $modal_header = "Received.";
@@ -278,8 +284,10 @@
                                 }
                                 else if($office_id > 3){
                                     if($_SESSION['office_id'] == $office_id){
-                                        $query_res = mysqli_query($conn,"update documents set FileLocation = '".$_SESSION['office_id']."',status='Pending' where DocumentID ='".$trackingno."';");
-                                        if($query_res){
+                                        $query_res = mysqli_query($conn,"update documents set FileLocation = '".$_SESSION['office_id']."',status = 'Pending', step_number = '".($row['step_number']+1)."' where DocumentID ='".$trackingno."';");
+                                        $query_updating_report = mysqli_query($conn,"INSERT INTO document_report(DocumentId, received_date, which_step) VALUES('".$trackingno."' ,'".date('Y-m-d H:i:s')."' ,'".($row['step_number']+1)."')");
+                                        echo mysqli_error($conn);
+                                        if($query_res && $query_updating_report){
                                             if(mysqli_affected_rows($conn) == 1){
                                                 mysqli_commit($conn);
                                                 $modal_header = "Received.";
@@ -317,7 +325,8 @@
                             if($document_data['status'] == "Pending"){
                                 //release the document
                                 $releasing_query = mysqli_query($conn,"update documents set status = 'Released' where documentID = '".$trackingno."';");
-                                if($releasing_query){
+                                $query_updating_report = mysqli_query($conn,"UPDATE document_report SET released_date = '".date('Y-m-d H:i:s')."' where DocumentId = '".$trackingno."'  and which_step = '".($document_data['step_number'])."'");
+                                if($releasing_query && $query_updating_report){
                                     mysqli_commit($conn);
                                     $modal_header = "Released.";
                                     $modal_val = "Document Released Succesfully.";
@@ -366,7 +375,7 @@
                                 else
                                     unauthorized_access();
                             }
-                            else if(mysqli_num_rows($doc_by_dept) == 2){
+                            else if(mysqli_num_rows($doc_by_dept) == 1){
                                 $sdean_id_query = mysqli_query($conn,"select sdean_id from school_dean where school_id IN (select school_id from departments where dept_id = ".mysqli_fetch_array($doc_by_dept)['dept_id']." );");
                                 $sdean_id = mysqli_fetch_array($sdean_id_query)['sdean_id'];
                                 if($_SESSION['office_id'] == 2 && $_SESSION['sdean_id'] == $sdean_id)
@@ -381,7 +390,7 @@
                                     unauthorized_access();
                             }
                             else if(mysqli_num_rows($doc_by_fdean) == 1){
-
+                                
                             }
                             else if(mysqli_num_rows($doc_by_office) == 1){
                                 
@@ -437,6 +446,12 @@
                                         unauthorized_access();
                                 }
                             }
+                            else if(mysqli_num_rows($doc_by_fdean) == 1){
+                                if($_SESSION['office_id'] == 3 && mysqli_fetch_array($doc_by_fdean)['fdean_id'] == $_SESSION['fdean_id'])
+                                    doc_release($conn,$document_data,$trackingno);
+                                else
+                                    unauthorized_access();
+                            }
                             else if(mysqli_num_rows($doc_by_office) == 1){
                             
                             }    
@@ -456,18 +471,100 @@
             };
         ?>
     <?php 
-        //pending documents at current office
         include "../databasec.php";
         $pending = "0";
-    /*    $result_dept = mysqli_query($conn,"select count(document_id) from doc_dept_relationship where dept_id = ".$_SESSION['department']." and document_id IN (select DocumentID from documents where FileLocation ='1' and status = 'Pending');");
-        $result_emp = mysqli_query($conn,"select count(document_id) from doc_emp_relationship where document_id IN (select DocumentID from documents where FileLocation ='1' and status = 'Pending') 
-                                                                                                and employee_id IN (select employee_id from emp_dept_relationship where dept_id = ".$_SESSION['department'].");");
-        $result_office = mysqli_query($conn,"select count(document_id) from doc_office_relationship where document_id IN (select DocumentID from documents where FileLocation ='1' and status = 'Pending');");        
-            $row_result_dept = mysqli_fetch_array($result_dept);
-            $row_result_emp = mysqli_fetch_array($result_emp);
-            $row_result_office = mysqli_fetch_array($result_office);
-            $pending = $row_result_dept['count(document_id)']+$row_result_emp['count(document_id)']+$row_result_office['count(document_id)'];
-   */ ?>
+        if($_SESSION['office_id'] == 2){
+            $pending_by_emp = mysqli_query($conn,"SELECT count(d.DocumentID) from documents d
+            INNER JOIN doc_emp_relationship der ON der.document_id = d.DocumentID
+            INNER JOIN emp_dept_relationship edr ON edr.employee_id = der.employee_id
+            INNER JOIN departments dp ON dp.dept_id = edr.dept_id
+            INNER JOIN schools s ON s.school_id = dp.school_id
+            INNER JOIN school_dean sd ON sd.school_id = s.school_id
+            AND sd.sdean_id = '".$_SESSION['sdean_id']."'
+            AND d.FileLocation = '2'
+            AND d.Status = 'Pending'
+            ");
+            $pending_by_dept = mysqli_query($conn,"SELECT count(d.DocumentID) from documents d
+            INNER JOIN doc_dept_relationship ddr ON d.DocumentID = ddr.document_id
+            INNER JOIN departments dp ON dp.dept_id = ddr.dept_id
+            INNER JOIN schools s ON s.school_id = dp.school_id
+            INNER JOIN school_dean sd ON sd.school_id = s.school_id
+            AND sd.sdean_id = '".$_SESSION['sdean_id']."'
+            AND d.FileLocation = '2'
+            AND d.Status = 'Pending'
+            ");
+
+            $pending_by_sdean = mysqli_query($conn,"SELECT count(DocumentID) FROM documents WHERE DocumentID LIKE '".$_SESSION['sdean_id']."_%' AND status ='Pending';");
+
+            if(mysqli_num_rows($pending_by_emp)>0){
+                $countvalue = mysqli_fetch_array($pending_by_emp)['count(d.DocumentID)'];
+                $pending += $countvalue;
+            }
+            if(mysqli_num_rows($pending_by_dept)>0){
+                $countvalue = mysqli_fetch_array($pending_by_dept)['count(d.DocumentID)'];
+                $pending += $countvalue;
+            }
+            if(mysqli_num_rows($pending_by_sdean)>0){
+                $countvalue = mysqli_fetch_array($pending_by_sdean)['count(DocumentID)'];
+                $pending += $countvalue;
+            }
+        }
+        else if($_SESSION['office_id'] == 3){
+            $pending_by_emp = mysqli_query($conn,"SELECT count(d.DocumentID) FROM documents d
+            INNER JOIN doc_emp_relationship der ON d.documentID = der.document_id
+            INNER JOIN emp_dept_relationship edr ON der.employee_id = edr.employee_id
+            INNER JOIN departments dpt ON edr.dept_id = dpt.dept_id
+            INNER JOIN schools s ON dpt.school_id = s.school_id
+            INNER JOIN faculty f ON s.faculty_id = f.faculty_id
+            INNER JOIN faculty_dean fd ON f.faculty_id = fd.faculty_id 
+            WHERE d.FileLocation = '3'
+            AND d.status = 'Pending'
+            AND fd.fdean_id = '".$_SESSION['fdean_id']."';");
+
+            $pending_by_dept = mysqli_query($conn,"SELECT count(d.DocumentID) FROM documents d
+            INNER JOIN doc_dept_relationship ddr ON d.documentID = ddr.document_id
+            INNER JOIN departments dpt ON ddr.dept_id = dpt.dept_id
+            INNER JOIN schools s ON dpt.school_id = s.school_id
+            INNER JOIN faculty f ON s.faculty_id = f.faculty_id
+            INNER JOIN faculty_dean fd ON f.faculty_id = fd.faculty_id 
+            WHERE d.FileLocation = '3'
+            AND d.status = 'Pending'
+            AND fd.fdean_id = '".$_SESSION['fdean_id']."';");
+
+            $pending_by_sdean = mysqli_query($conn,"SELECT count(d.DocumentID) FROM documents d
+            INNER JOIN doc_sdean_relationship dsr ON dsr.document_id = d.DocumentID
+            INNER JOIN school_dean sd ON sd.sdean_id = dsr.sdean_id
+            INNER JOIN schools s ON s.school_id = sd.school_id
+            INNER JOIN faculty f ON f.faculty_id = s.faculty_id
+            INNER JOIN faculty_dean fd ON fd.faculty_id = f.faculty_id
+            WHERE d.FileLocation = '3'
+            AND d.status = 'Pending'
+            AND fd.fdean_id = '".$_SESSION['fdean_id']."';");
+            
+            $pending_by_fdean = mysqli_query($conn,"SELECT count(DocumentID) FROM documents WHERE DocumentID LIKE '".$_SESSION['fdean_id']."_%' AND status ='Pending';");
+
+            if(mysqli_num_rows($pending_by_emp)>0){
+                $countvalue = mysqli_fetch_array($pending_by_emp)['count(d.DocumentID)'];
+                $pending += $countvalue;
+            }
+            if(mysqli_num_rows($pending_by_dept)>0){
+                $countvalue = mysqli_fetch_array($pending_by_dept)['count(d.DocumentID)'];
+                $pending += $countvalue;
+            }
+            if(mysqli_num_rows($pending_by_sdean)>0){
+                $countvalue = mysqli_fetch_array($pending_by_sdean)['count(d.DocumentID)'];
+                $pending += $countvalue;
+            }
+            if(mysqli_num_rows($pending_by_fdean)>0){
+                $countvalue = mysqli_fetch_array($pending_by_fdean)['count(DocumentID)'];
+                $pending += $countvalue;
+            }
+
+        }
+        else if($_SESSION['office_id'] > 3){
+            $pending_by_office = mysqli_query($conn,"select * from documents where FileLocation = '".$_SESSION['office_id']."' and status = 'Pending';");
+        }
+    ?>
     <div class="row">
         <div class = "col col-sm-2">
             <div style = "padding-left: 16px;">
@@ -478,8 +575,11 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><div><a href="pending_for_release.php"><img src="../ico/pending.png" width = "20" height = "20">  Pending for Release (<?php echo $pending ?>)</a></div></li>
                         <li class="list-group-item"><a href="#"><img src="../ico/terminal.png" width = "20" height = "20">  Tagged as Terminal</a></li>
-                        <li class="list-group-item"><a href="add_employee.php"><img src="../ico/employee.png" width = "20" height = "20">  Add an Employee</a></li>
-                        <li class="list-group-item"><a href="#"><img src="../ico/my_documents.png" width = "20" height = "20">  My Documents</a></li>
+                        <li class="list-group-item"><a href="add_employee.php"><img src="../ico/employee.png" width = "20" height = "20">   Add an Employee</a></li>
+                        <li class="list-group-item"><a href="#"><img src="../ico/my_documents.png" width = "20" height = "20">   My Documents</a></li>
+                        <?php if($_SESSION['office_id'] == 9){
+                            echo '<li class="list-group-item"><a href="gen_report.php"><img src="../ico/report.png" width = "20" height = "20">   Generate Report</a></li>';
+                        } ?>
                         <li class="list-group-item"><a href="../logout.php?logout=true"><img src="../ico/logout.png" width = "20" height = "20">  Log Out</a></li>
                     </ul>
                 </div>
